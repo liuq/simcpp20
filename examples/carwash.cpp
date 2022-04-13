@@ -12,7 +12,7 @@
 struct config {
   int initial_cars;
   double wash_time;
-  resource<> machines;
+  simcpp20::resource<> machines;
   std::uniform_int_distribution<> arrival_time_dist;
   std::default_random_engine gen;
 };
@@ -53,7 +53,7 @@ int main() {
   config conf{
       .initial_cars = 4,
       .wash_time = 5,
-      .machines = resource{sim, 2},
+      .machines = simcpp20::resource{sim, 2},
       .arrival_time_dist = std::uniform_int_distribution<>{3, 7},
       .gen = std::default_random_engine{rd()},
   };

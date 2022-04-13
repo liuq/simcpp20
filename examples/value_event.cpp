@@ -2,7 +2,6 @@
 // Licensed under the MIT license. See the LICENSE file for details.
 
 #include <cstdio>
-
 #include "fschuetz04/simcpp20.hpp"
 
 simcpp20::event<> consumer(simcpp20::simulation<> &sim,

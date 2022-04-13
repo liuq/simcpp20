@@ -11,7 +11,7 @@
 
 struct config {
   int n_customers;
-  resource<> counters;
+  simcpp20::resource<> counters;
   std::uniform_real_distribution<> max_wait_time_dist;
   std::exponential_distribution<> arrival_interval_dist;
   std::exponential_distribution<> service_time_dist;
@@ -52,7 +52,7 @@ int main() {
   std::random_device rd;
   config conf{
       .n_customers = 5,
-      .counters = resource{sim, 1},
+      .counters = simcpp20::resource{sim, 1},
       .max_wait_time_dist = std::uniform_real_distribution<>{1., 3.},
       .arrival_interval_dist = std::exponential_distribution<>{1. / 10},
       .service_time_dist = std::exponential_distribution<>{1. / 12},

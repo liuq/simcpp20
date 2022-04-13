@@ -57,8 +57,9 @@ public:
 
   /**
    * @tparam Value Value type of the event.
+   * @tparam Args inferred types of the Value constructor.
    * @param delay Delay after which to process the event.
-   * @param value Value of the event.
+   * @param args arguments for the constructor of the Value associated the event.
    * @return New pending value event.
    */
   template <typename Value, typename... Args>

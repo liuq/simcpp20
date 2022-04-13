@@ -7,11 +7,21 @@
 #include "catch2/catch_test_macros.hpp"
 #include "catch2/generators/catch_generators.hpp"
 #include "fschuetz04/simcpp20.hpp"
+#include "fschuetz04/resource.hpp"
 
 simcpp20::event<> awaiter(simcpp20::simulation<> &sim, simcpp20::event<> ev,
                           double target, bool &finished) {
   REQUIRE(sim.now() == 0);
   co_await ev;
+  REQUIRE(sim.now() == target);
+  finished = true;
+};
+
+simcpp20::event<> awaiter_sequence(simcpp20::simulation<> &sim, simcpp20::event<> ev_1, simcpp20::event<> ev_2,
+                          double target, bool &finished) {
+  REQUIRE(sim.now() == 0);
+  co_await ev_1;
+  co_await ev_2;
   REQUIRE(sim.now() == target);
   finished = true;
 };
@@ -81,5 +91,52 @@ TEST_CASE("boolean logic") {
     sim.run();
 
     REQUIRE(finished);
+  }
+}
+
+TEST_CASE("resources") {
+  simcpp20::simulation<> sim;
+  simcpp20::store<int> store{sim}; 
+
+  SECTION("store makes get() wait for put()") {
+    auto ev = store.get();
+    
+    sim.run_until(2);
+    REQUIRE(ev.pending());
+    store.put(42);
+    sim.run();
+
+    REQUIRE(ev.processed());
+    REQUIRE(ev.value() == 42);
+    REQUIRE(store.size() == 0);
+  }
+
+  SECTION("store does not make put() wait for get()") {
+    bool finished_put = false, finished_get = false;
+    auto put_ev = store.put(42);    
+    auto get_ev = store.get();
+    awaiter(sim, put_ev, 0, finished_put);
+    awaiter(sim, get_ev, 0, finished_get);
+
+    sim.run();
+    REQUIRE(put_ev.processed());
+    REQUIRE(get_ev.processed());
+    REQUIRE(get_ev.value() == 42);
+    REQUIRE(store.size() == 0);
+    REQUIRE(finished_put);
+    REQUIRE(finished_get);
+  }
+
+  SECTION("aborted get() do not get the value") {
+    auto ev = store.get();
+    
+    sim.run_until(2);
+    REQUIRE(ev.pending());
+    ev.abort();
+    store.put(42);
+    sim.run();
+
+    REQUIRE(store.size() == 1);
+    REQUIRE(ev.aborted());
   }
 }
