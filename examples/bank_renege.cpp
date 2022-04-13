@@ -11,7 +11,7 @@
 
 struct config {
   int n_customers;
-  resource counters;
+  resource<> counters;
   std::uniform_real_distribution<> max_wait_time_dist;
   std::exponential_distribution<> arrival_interval_dist;
   std::exponential_distribution<> service_time_dist;

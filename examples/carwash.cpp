@@ -12,7 +12,7 @@
 struct config {
   int initial_cars;
   double wash_time;
-  resource machines;
+  resource<> machines;
   std::uniform_int_distribution<> arrival_time_dist;
   std::default_random_engine gen;
 };
