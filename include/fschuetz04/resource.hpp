@@ -5,7 +5,7 @@
 
 #include <cstdint>
 #include <queue>
-#include <iostream>
+#include <list>
 
 #include "fschuetz04/simcpp20.hpp"
 
@@ -128,6 +128,91 @@ private:
   simcpp20::simulation<Time> &sim;
   std::queue<simcpp20::value_event<Value, Time>> evs{};
   std::queue<Value> queue_;
+};
+
+/**
+ * Used to create a (discrete) shared store for a given type.
+ *
+ * To create a new instance, initialize the class passing
+ * the type of the stored values.
+ *
+ *     simcpp20::resource<int> store;
+ *
+ * @tparam Value Type used for stored values.
+ * @tparam Time Type used for simulation time.
+ */
+
+template <typename Value, typename Time = double> class filtered_store {
+public:
+  filtered_store(simcpp20::simulation<Time> &sim) : sim{sim} {}
+
+
+  /**
+   * @tparam Args inferred types of the Value constructor.
+   * @param args arguments for the constructor of the Value associated the event.
+   * @return A new triggered event that confirms the effect of the put operation.
+   */
+  template <typename... Args>
+  simcpp20::event<Time> put(Args &&...args) {
+    auto ev = sim.event();
+    list_.push_back(std::forward<Args>(args)...);
+    ev.trigger();
+    trigger_put();
+    return ev;
+  }
+
+  /**
+   * @return A new value event that could be triggered if there are values available in the queue or pending otherwise.
+   */
+  simcpp20::value_event<Value, Time> get(std::function<bool(const Value& v)> p) {
+    auto ev = sim.template event<Value>();
+    if (list_.size() > 0) {
+      trigger_get(ev, p);
+    } else {
+      evs.push_back({ ev, p });
+    }
+    return ev;
+  }
+
+  /**
+   * @return size_t number of stored elements.
+   */
+
+  size_t size() {
+    return list_.size();
+  }
+
+protected:
+  void trigger_put() {
+    // the only value candidate to be checked is the newly added one at the list back
+    // get rid of aborted events anyway
+    evs.erase(std::remove_if(evs.begin(), evs.end(), [](auto pair) { return pair.first.aborted(); }), evs.end());
+    if (evs.size() == 0 || list_.size() == 0)
+      return;
+    for (auto it = evs.begin(); it != evs.end(); ++it) {
+      auto ev = it->first;
+      auto p = it->second;
+      if (p(list_.back())) {
+        ev.trigger(list_.back());
+        it = evs.erase(it);
+        list_.pop_back();
+        break;
+      }        
+    }
+  }
+
+  void trigger_get(simcpp20::value_event<Value, Time>& ev, std::function<bool(const Value& v)> p) {
+    auto it = std::find_if(list_.begin(), list_.end(), p);
+    if (it != list_.end()) {
+      ev.trigger(*it);
+      it = list_.erase(it);
+    }
+  }
+
+private:
+  simcpp20::simulation<Time> &sim;
+  std::list<std::pair<simcpp20::value_event<Value, Time>, std::function<bool(const Value&)>>> evs{};
+  std::list<Value> list_;
 };
 
 } // namespace simcpp20

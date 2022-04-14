@@ -94,7 +94,7 @@ TEST_CASE("boolean logic") {
   }
 }
 
-TEST_CASE("resources") {
+TEST_CASE("store resource") {
   simcpp20::simulation<> sim;
   simcpp20::store<int> store{sim}; 
 
@@ -138,5 +138,82 @@ TEST_CASE("resources") {
 
     REQUIRE(store.size() == 1);
     REQUIRE(ev.aborted());
+  }
+}
+
+TEST_CASE("filtered store resource") {
+  simcpp20::simulation<> sim;
+  simcpp20::filtered_store<int> store{sim}; 
+
+  SECTION("store makes get() wait for put()") {
+    auto ev = store.get([](auto v) { return v >= 40; });
+    
+    sim.run_until(2);
+    REQUIRE(ev.pending());
+    store.put(42);
+    sim.run();
+
+    REQUIRE(ev.processed());
+    REQUIRE(ev.value() == 42);
+    REQUIRE(store.size() == 0);
+  }
+
+  SECTION("store does not make put() wait for get()") {
+    bool finished_put = false, finished_get = false;
+    auto put_ev = store.put(42);    
+    auto get_ev = store.get([](auto v) { return v >= 40; });
+    awaiter(sim, put_ev, 0, finished_put);
+    awaiter(sim, get_ev, 0, finished_get);
+
+    sim.run();
+    REQUIRE(put_ev.processed());
+    REQUIRE(get_ev.processed());
+    REQUIRE(get_ev.value() == 42);
+    REQUIRE(store.size() == 0);
+    REQUIRE(finished_put);
+    REQUIRE(finished_get);
+  }
+
+  SECTION("aborted get() do not get the value") {
+    auto ev = store.get([](auto v) { return v >= 40; });
+    
+    sim.run_until(2);
+    REQUIRE(ev.pending());
+    ev.abort();
+    store.put(42);
+    sim.run();
+
+    REQUIRE(store.size() == 1);
+    REQUIRE(ev.aborted());
+  }
+
+  SECTION("older get() will get the value when available") {
+    auto ev_1 = store.get([](auto v) { return v >= 40;}), ev_2 = store.get([](auto v) { return v < 0; });
+    
+    sim.run_until(2);
+    REQUIRE(ev_1.pending());
+    REQUIRE(ev_2.pending());
+    store.put(42);
+    sim.run();
+
+    REQUIRE(store.size() == 0);
+    REQUIRE(ev_2.pending());
+    REQUIRE(ev_1.processed());
+    REQUIRE(ev_1.value() == 42);
+  }
+
+  SECTION("newer get() will get the value when available") {
+    auto ev_1 = store.get([](auto v) { return v < 0; }), ev_2 = store.get([](auto v) { return v >= 40;});
+    
+    sim.run_until(2);
+    REQUIRE(ev_1.pending());
+    REQUIRE(ev_2.pending());
+    store.put(42);
+    sim.run();
+
+    REQUIRE(store.size() == 0);
+    REQUIRE(ev_1.pending());
+    REQUIRE(ev_2.processed());
+    REQUIRE(ev_2.value() == 42);
   }
 }

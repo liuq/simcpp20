@@ -17,7 +17,9 @@ set(TARGETS
   ping_pong
   value_event
   value_process
-  store)
+  store
+  filtered_store
+  )
 
 foreach(TARGET ${TARGETS})
   add_executable(${TARGET} ${TARGET}.cpp)
