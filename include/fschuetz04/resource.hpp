@@ -111,6 +111,13 @@ public:
     return queue_.size();
   }
 
+  /**
+   * @return size_t number of waiting events.
+   */
+  size_t waiting() {
+    return evs.size();
+  }
+
 protected:
   void trigger_get() {
     while (evs.size() > 0 && queue_.size() > 0) {
@@ -145,7 +152,6 @@ private:
 template <typename Value, typename Time = double> class filtered_store {
 public:
   filtered_store(simcpp20::simulation<Time> &sim) : sim{sim} {}
-
 
   /**
    * @tparam Args inferred types of the Value constructor.
@@ -182,10 +188,17 @@ public:
     return list_.size();
   }
 
+  /**
+   * @return size_t number of waiting events.
+   */
+  size_t waiting() {
+    return evs.size();
+  }
+
 protected:
   void trigger_put() {
     // the only value candidate to be checked is the newly added one at the list back
-    // get rid of aborted events anyway
+    // some maintenance: get rid of aborted events, if any
     evs.erase(std::remove_if(evs.begin(), evs.end(), [](auto pair) { return pair.first.aborted(); }), evs.end());
     if (evs.size() == 0 || list_.size() == 0)
       return;
@@ -202,10 +215,14 @@ protected:
   }
 
   void trigger_get(simcpp20::value_event<Value, Time>& ev, std::function<bool(const Value& v)> p) {
+    // some maintenance: get rid of aborted events, if any
+    evs.erase(std::remove_if(evs.begin(), evs.end(), [](auto pair) { return pair.first.aborted(); }), evs.end());
     auto it = std::find_if(list_.begin(), list_.end(), p);
     if (it != list_.end()) {
       ev.trigger(*it);
       it = list_.erase(it);
+    } else {
+      evs.push_back({ ev, p });
     }
   }
 

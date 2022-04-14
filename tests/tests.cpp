@@ -198,6 +198,7 @@ TEST_CASE("filtered store resource") {
 
     REQUIRE(store.size() == 0);
     REQUIRE(ev_2.pending());
+    REQUIRE(store.waiting() == 1);
     REQUIRE(ev_1.processed());
     REQUIRE(ev_1.value() == 42);
   }
@@ -213,6 +214,7 @@ TEST_CASE("filtered store resource") {
 
     REQUIRE(store.size() == 0);
     REQUIRE(ev_1.pending());
+    REQUIRE(store.waiting() == 1);
     REQUIRE(ev_2.processed());
     REQUIRE(ev_2.value() == 42);
   }
