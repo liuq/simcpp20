@@ -448,6 +448,15 @@ protected:
 
   friend class simulation<Time>;
   friend struct std::hash<event<Time>>;
+public:
+/**
+ * @brief spaceship operator just for storing events in containers that
+ * require the order
+ * 
+ */
+  constexpr int operator<=>(const event<Time>& o) const {
+    return (this < &o) ? -1 : ((this == &o) ? 0 : +1);
+  }
 };
 } // namespace simcpp20
 
