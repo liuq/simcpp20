@@ -178,6 +178,15 @@ public:
   }
 
   /**
+   * @return A new value event that could be triggered if there are values available in the queue or pending otherwise.
+  */
+  simcpp20::value_event<Value, Time> get() {
+    std::function<bool(const Value& v)> p = [](const Value&) { return true; };
+    return get(p);
+  }
+
+
+  /**
    * @param p a predicate that states the conditions that must hold of retrieving a value.
    * @return A new value event that could be triggered if there are values available in the queue or pending otherwise.
    */
