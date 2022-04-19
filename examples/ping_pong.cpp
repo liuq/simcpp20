@@ -9,6 +9,9 @@ struct ev_type;
 using ev_inner = simcpp20::value_event<ev_type>;
 struct ev_type {
   ev_inner ev;
+#ifdef CLANG_COMPILER
+  ev_type(const ev_inner& ev) : ev(ev) {}
+#endif
 };
 
 simcpp20::event<> party(simcpp20::simulation<> &sim, const char *name,

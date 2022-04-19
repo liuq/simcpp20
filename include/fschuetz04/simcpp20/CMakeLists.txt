@@ -16,3 +16,8 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     message(WARNING "SimCpp20 requires MSVC 19.28 or later")
   endif()
 endif()
+
+if (CMAKE_CXX_COMPILER_ID MATCHES "Clang|AppleClang")
+  message(WARNING "Clang compiler has experimental coroutine support")
+  target_compile_definitions(fschuetz04_simcpp20 INTERFACE CLANG_COMPILER=1)
+endif ()

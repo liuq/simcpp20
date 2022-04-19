@@ -5,12 +5,23 @@
 
 #include <cassert>    // assert
 #include <cmath>      // std::log2
+#ifndef CLANG_COMPILER
 #include <coroutine>  // std::coroutine_handle, std::suspend_never
+#else
+#include <experimental/coroutine>
+#endif
 #include <cstddef>    // std::size_t
 #include <functional> // std::function
 #include <functional> // std::hash
 #include <utility>    // std::exchange
 #include <vector>     // std::vector
+
+#ifdef CLANG_COMPILER
+namespace std {
+  using experimental::suspend_never;
+  using experimental::coroutine_handle;
+}
+#endif
 
 namespace simcpp20 {
 template <typename Time> class simulation;

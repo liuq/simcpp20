@@ -4,8 +4,19 @@
 #pragma once
 
 #include <cassert>   // assert
-#include <coroutine> // std::suspend_never
+#ifndef CLANG_COMPILER
+#include <coroutine>  // std::suspend_never
+#else
+#include <experimental/coroutine>
+#endif
 #include <utility>   // std::forward, std::exchange
+
+#ifdef CLANG_COMPILER
+namespace std {
+  using experimental::suspend_never;
+  using experimental::coroutine_handle;
+}
+#endif
 
 namespace simcpp20 {
 /**
