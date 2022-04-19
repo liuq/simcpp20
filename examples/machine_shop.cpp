@@ -5,8 +5,8 @@
 
 // TODO(fschuetz04): Memory leak
 
-#include "fschuetz04/simcpp20.hpp"
-#include "fschuetz04/resource.hpp"
+#include "simcpp20/simcpp20.hpp"
+#include "simcpp20/resource.hpp"
 
 #include <cstdio>
 #include <random>

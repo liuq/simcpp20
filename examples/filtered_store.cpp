@@ -3,8 +3,8 @@
 
 #include <cstdio>
 
-#include "fschuetz04/simcpp20.hpp"
-#include "fschuetz04/resource.hpp"
+#include "simcpp20/simcpp20.hpp"
+#include "simcpp20/resource.hpp"
 
 simcpp20::event<> producer(simcpp20::simulation<> &sim,
                            simcpp20::filtered_store<int>& store) {

@@ -7,20 +7,20 @@ else()
 endif()
 
 project(simcpp20
-  VERSION      0.1.0
+  VERSION      0.1.2
   DESCRIPTION  "Discrete-event simulation in C++20 using coroutines"
-  HOMEPAGE_URL "https://github.com/fschuetz04/simcpp20"
+  HOMEPAGE_URL "https://github.com/liuq/simcpp20"
   LANGUAGES    CXX)
 
-add_subdirectory(include/fschuetz04/simcpp20)
+add_subdirectory(include/simcpp20/simcpp20)
 
-option(FSCHUETZ04_SIMCPP20_BUILD_TESTS "Build tests" ${MAIN_PROJECT})
-if(FSCHUETZ04_SIMCPP20_BUILD_TESTS)
+option(SIMCPP20_BUILD_TESTS "Build tests" ${MAIN_PROJECT})
+if(SIMCPP20_BUILD_TESTS)
   add_subdirectory(tests)
 endif()
 
-option(FSCHUETZ04_SIMCPP20_BUILD_EXAMPLES "Build examples" ${MAIN_PROJECT})
-if(FSCHUETZ04_SIMCPP20_BUILD_EXAMPLES)
+option(SIMCPP20_BUILD_EXAMPLES "Build examples" ${MAIN_PROJECT})
+if(SIMCPP20_BUILD_EXAMPLES)
   add_subdirectory(examples)
 endif()
 

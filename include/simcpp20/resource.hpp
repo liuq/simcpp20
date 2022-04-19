@@ -9,7 +9,7 @@
 #include <vector>
 #include <tuple>
 
-#include "fschuetz04/simcpp20.hpp"
+#include "simcpp20/simcpp20.hpp"
 
 namespace simcpp20 {
 
