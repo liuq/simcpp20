@@ -48,7 +48,7 @@ public:
     return evs.size();
   }
 
-private:
+protected:
   std::queue<simcpp20::event<Time>> evs{};
   simcpp20::simulation<Time> &sim;
   uint64_t available_;
@@ -141,7 +141,7 @@ protected:
     }
   }
 
-private:
+protected:
   simcpp20::simulation<Time> &sim;
   std::queue<simcpp20::value_event<Value, Time>> evs{};
   std::queue<Value> queue_;
@@ -246,7 +246,7 @@ protected:
     }
   }
 
-private:
+protected:
   simcpp20::simulation<Time> &sim;
   std::list<std::pair<simcpp20::value_event<Value, Time>, std::function<bool(const Value&)>>> evs{};
   std::list<Value> list_;
@@ -329,7 +329,7 @@ protected:
       queue_.pop();      
     }
   }
-private:
+protected:
   simcpp20::simulation<Time> &sim;
   std::priority_queue<pq_item, std::vector<pq_item>, std::greater<pq_item>> evs{};
   std::queue<Value> queue_;   
