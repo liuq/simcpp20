@@ -178,6 +178,9 @@ public:
   /// @return Current simulation time.
   Time now() const { return now_; }
 
+  /// @return The simulation time of the next scheduled event.
+  Time peek() const { return scheduled_evs_.size() > 0 ? scheduled_evs_.top().time : std::numeric_limits<Time>::infinity; }
+
 private:
   /// One event scheduled to be processed.
   class scheduled_event {
