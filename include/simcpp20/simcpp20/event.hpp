@@ -340,7 +340,7 @@ public:
      */
     std::suspend_never final_suspend() const noexcept { return {}; }
 
-    /// Refernece to the simulation.
+    /// Reference to the simulation.
     simulation<Time> &sim_;
 
     /**

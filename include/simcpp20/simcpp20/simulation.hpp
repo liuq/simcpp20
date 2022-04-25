@@ -197,15 +197,21 @@ private:
         : time_{time}, id_{id}, ev_{ev} {}
 
     /**
+     * @brief spaceship operator
+     * 
      * @param other Scheduled event to compare to.
-     * @return Whether this event is scheduled before the given event.
+     * @return Whether this event is scheduled before, or after the given event.
      */
-    bool operator>(const scheduled_event &other) const {
-      if (time_ != other.time_) {
-        return time_ > other.time_;
-      }
-
-      return id_ > other.id_;
+    constexpr int operator<=>(const scheduled_event &other) const {
+      if (time_< other.time_)
+        return -1;
+      if (time_ > other.time_)
+        return +1;
+      if (id_ < other.id_)
+        return -1;
+      if (id_ > other.id_)
+        return +1;
+      return 0;
     }
 
     /// Time at which to process the event.
