@@ -44,7 +44,7 @@ public:
   /**
    * @return size_t number of waiting events.
    */
-  size_t waiting() const {
+  constexpr size_t waiting() const {
     return evs.size();
   }
 
@@ -54,7 +54,7 @@ protected:
   uint64_t available_;
 
   void trigger_evs() {
-    while (available() > 0 && evs.size() > 0) {
+    while (available_ > 0 && evs.size() > 0) {
       auto ev = evs.front();
       evs.pop();
       if (ev.aborted()) {
@@ -116,14 +116,14 @@ public:
    * @return size_t number of stored elements.
    */
 
-  size_t size() const {
+  constexpr size_t size() const {
     return queue_.size();
   }
 
   /**
    * @return size_t number of waiting events.
    */
-  size_t waiting() const {
+  constexpr size_t waiting() const {
     return evs.size();
   }
 
@@ -204,14 +204,14 @@ public:
    * @return size_t number of stored elements.
    */
 
-  size_t size() const {
+  constexpr size_t size() const {
     return list_.size();
   }
 
   /**
    * @return size_t number of waiting events.
    */
-  size_t waiting() const {
+  constexpr size_t waiting() const {
     return evs.size();
   }
 
@@ -307,14 +307,14 @@ public:
    * @return size_t number of stored elements.
    */
 
-  size_t size() const {
+  constexpr size_t size() const {
     return queue_.size();
   }
 
   /**
    * @return size_t number of waiting events.
    */
-  size_t waiting() const {
+  constexpr size_t waiting() const {
     return evs.size();
   }
 
