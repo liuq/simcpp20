@@ -11,6 +11,7 @@
 #include <queue>      // std::priority_queue
 #include <utility>    // std::forward
 #include <vector>     // std::vector
+#include <concepts>   // std::same_as
 
 #include "event.hpp"
 #include "value_event.hpp"
@@ -94,6 +95,11 @@ public:
     }
 
     return any_of_ev;
+  }
+
+  template <std::same_as<event_type>... Events>
+  event_type any_of(Events... events) {
+    return any_of(std::vector<event_type>({std::forward<Events>(events)...}));
   }
 
   /**
