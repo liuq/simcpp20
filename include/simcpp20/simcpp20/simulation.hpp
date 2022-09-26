@@ -72,7 +72,7 @@ public:
   }
 
   /**
-   * @param evs List of events.
+   * @param evs Vector of events.
    * @return New pending event which is triggered when any of the given events
    * is processed.
    */
@@ -97,13 +97,18 @@ public:
     return any_of_ev;
   }
 
+  /**
+   * @param evs List of events.
+   * @return New pending event which is triggered when any of the given events
+   * is processed.
+   */
   template <std::same_as<event_type>... Events>
-  event_type any_of(Events... events) {
-    return any_of(std::vector<event_type>({std::forward<Events>(events)...}));
+  event_type any_of(Events... evs) {
+    return any_of(std::vector<event_type>({std::forward<Events>(evs)...}));
   }
 
   /**
-   * @param evs List of events.
+   * @param evs Vector of events.
    * @return New pending event which is triggered when all of the given events
    * are processed.
    */
@@ -135,9 +140,14 @@ public:
     return all_of_ev;
   }
 
+  /**
+   * @param evs Variadic list of events.
+   * @return New pending event which is triggered when all of the given events
+   * are processed.
+   */
   template <std::same_as<event_type>... Events>
-  event_type all_of(Events... events) {
-    return all_of(std::vector<event_type>({std::forward<Events>(events)...}));
+  event_type all_of(Events... evs) {
+    return all_of(std::vector<event_type>({std::forward<Events>(evs)...}));
   }
 
   /**
