@@ -135,6 +135,11 @@ public:
     return all_of_ev;
   }
 
+  template <std::same_as<event_type>... Events>
+  event_type all_of(Events... events) {
+    return all_of(std::vector<event_type>({std::forward<Events>(events)...}));
+  }
+
   /**
    * @param ev Event to be processed.
    * @param delay Delay after which to process the event.
